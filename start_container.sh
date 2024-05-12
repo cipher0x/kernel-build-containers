@@ -10,16 +10,16 @@ print_help() {
 	echo "  If cmd is empty, we will start an interactive bash in the container."
 }
 
-groups | grep docker
-NEED_SUDO=$?
+groups | grep podman
+NEED_SUDO=0
 
 set -eu
 
 if [ $NEED_SUDO -eq 1 ]; then
-	echo "Hey, we gonna use sudo for running docker"
+	echo "Hey, we gonna use sudo for running podman"
 	SUDO_CMD="sudo"
 else
-	echo "Hey, you are in docker group, sudo is not needed"
+	echo "Hey, you are in podman group, sudo is not needed"
 	SUDO_CMD=""
 fi
 
@@ -43,7 +43,7 @@ while [[ $# -gt 0 ]]; do
 	-n | --non-interactive)
 		INTERACTIVE=""
 		CIDFILE="--cidfile $OUT/container.id"
-		echo "Run docker in NON-interactive mode"
+		echo "Run podman in NON-interactive mode"
 		shift
 		;;
 	-e | --env)
@@ -78,7 +78,7 @@ if [ ! -z "$ENV" ]; then
 fi
 
 if [ ! -z $INTERACTIVE ]; then
-	echo "Gonna run docker in interactive mode"
+	echo "Gonna run podman in interactive mode"
 fi
 
 echo "Mount source code directory \"$SRC\" at \"/home/$(id -nu)/src\""
@@ -91,7 +91,7 @@ else
 fi
 
 # Z for setting SELinux label
-exec $SUDO_CMD docker run $ENV $INTERACTIVE $CIDFILE --rm \
+exec $SUDO_CMD podman run $ENV $INTERACTIVE $CIDFILE --rm \
 	-v $SRC:/home/$(id -nu)/src:Z \
 	-v $OUT:/home/$(id -nu)/out:Z \
 	kernel-build-container:$COMPILER "$@"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-groups | grep docker
-NEED_SUDO=$?
+groups | grep podman
+NEED_SUDO=0
 
 if [ $NEED_SUDO -eq 1 ]; then
 	echo "Hey, we gonna use sudo for running docker"
@@ -15,7 +15,7 @@ set -e
 
 build_gcc_container() {
 	echo -e "\nBuilding a container with GCC_VERSION=$1 from UBUNTU_VERSION=$2"
-	$SUDO_CMD docker build \
+	$SUDO_CMD podman build \
 		--build-arg GCC_VERSION=$1 \
 		--build-arg UBUNTU_VERSION=$2 \
 		--build-arg UNAME=$(id -nu) \
